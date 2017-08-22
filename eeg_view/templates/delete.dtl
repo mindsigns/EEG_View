@@ -1,0 +1,28 @@
+{% extends "base.dtl" %}
+
+{% block title %} <title> Erltricity : Info </title> {% endblock %}
+
+{% block body %}
+ 
+    {% for sess in session %}
+<div class="row">
+  <div class="col-md-6 col-md-offset-3">
+    <form class="form-horizontal" role="form" method="POST" > 
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">Delete Session "{{ sess.name }}"?</h3>
+            </div>
+            <div class="panel-body">
+                You are about to delete this session and the associated statistics.<br/>
+                Only the raw EEG data will be left. <br/><br/>
+                <button class="btn btn-danger" id="button" type="submit">Delete</button>&nbsp;
+                <a text="Home" href="/"><span class="btn btn-large btn-primary glyphicon glyphicon-home"></span></a>
+            </div>
+        </div>
+            <input type="hidden" name="session_id" value="{{ sess.id }}">
+    </form>
+</div>
+</div>
+
+    {% endfor %}
+{% endblock %}

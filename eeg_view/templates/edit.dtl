@@ -1,0 +1,50 @@
+{% extends "base.dtl" %}
+
+{% block title %} <title> Erltricity : Info </title> {% endblock %}
+
+{% block navbar %} <a class="navbar-brand" href="#">Editing session</a> {% endblock %}
+
+{% block body %}
+ 
+    {% for entry in entries %}
+    <form class="form-horizontal" role="form" method="POST" > 
+        <fieldset>
+            <legend>{{ entry.name}}</legend>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="name">Session name</label>
+                <div class="col-lg-6">
+                    <input type="text" name="name" id="name" value="{{ entry.name}}" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="starttime">Start time</label>
+                <div class="col-lg-6">
+                    <input type="text" name="starttime" id="starttime" value="{{ entry.starttime }}" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="stoptime">Stop time</label>
+                <div class="col-lg-6">
+                    <input type="text" name="stoptime" id="stoptime" value="{{ entry.stoptime }}" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label" for="notes">Notes</label>
+                <div class="col-lg-6">
+                    <textarea name="notes" id="message" class="form-control" rows="10">{{ entry.notes}}</textarea>
+                </div>                                
+            </div>                                
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button class="btn btn-primary" id="button" type="submit">Update entry</button>
+                    <a text="Make stats" href="/restat/{{entry.id}}"><span class="btn btn-large btn-warning glyphicon glyphicon-repeat"></span></a>
+                    <a text="View Graph" href="/show/{{entry.id}}"><span class="btn btn-large btn-success glyphicon glyphicon-signal"></span></a>
+                    <a text="Delete" href="/delete/{{ entry.id}}"><span class="btn btn-large btn-danger glyphicon glyphicon-remove"></span></a>
+                </div>                                
+            </div>                                
+            <input type="hidden" name="session_id" value="{{ entry.id }}">
+        </fieldset>
+      </form>
+
+    {% endfor %}
+{% endblock %}

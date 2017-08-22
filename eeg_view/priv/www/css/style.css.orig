@@ -1,0 +1,25 @@
+body{
+    background: url('../background.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+@media (min-width: 768px) {
+    .navbar .navbar-nav {
+        display: inline-block;
+        float: none;
+    }
+
+    .navbar .navbar-collapse {
+        text-align: center;
+    }
+}
+
+#graph{
+     position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 40px;
+}

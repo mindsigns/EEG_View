@@ -1,0 +1,176 @@
+{% extends "base.dtl" %}
+
+{% block title %} <title> EEG View : Compare </title> {% endblock %}
+
+{% block headers %}
+    <script type="text/javascript" src="/static/js/dygraph.js"></script>
+{% endblock %}
+
+{% block body %}
+
+<table class="table"><tr><td>
+    <div id="graph"></div>
+    </td><td valign="top" align="left">
+    <div id="labels" style="width:180px; font-size:1em;"></div>
+    </td>
+</tr></table>
+
+<fieldset>
+    <div class="well">
+        <span>
+        <input type=checkbox id=0 onClick="toggleline(this)" checked>
+        <label for="0">Meditation</label>
+        </span>
+        <span>
+        <input type=checkbox id=1 onClick="toggleline(this)" checked>
+        <label for="1">Attention</label>
+        </span>
+        <span>
+        <input type=checkbox id=2 onClick="toggleline(this)" checked>
+        <label for="2"> Delta </label>
+        </span>
+        <span>
+        <input type=checkbox id=3 onClick="toggleline(this)" checked>
+        <label for="3"> Theta </label>
+        </span>
+        <span>
+        <input type=checkbox id=4 onClick="toggleline(this)" checked>
+        <label for="4"> HighAlpha </label>
+        </span>
+        <span>
+        <input type=checkbox id=5 onClick="toggleline(this)" checked>
+        <label for="5"> LowAlpha </label>
+        </span>
+        <span>
+        <input type=checkbox id=6 onClick="toggleline(this)" checked>
+        <label for="6"> HighBeta </label>
+        </span>
+        <span>
+        <input type=checkbox id=7 onClick="toggleline(this)" checked>
+        <label for="7"> LowBeta </label>
+        </span>
+    </div>
+</fieldset>
+
+
+<h3>Overall Session Stats</h3>
+   <table class="table table-hover" summary="Session Stats">
+    <thead>
+     <tr class="active">
+        <th>Session</th>
+        <th>Med Avg</th>
+        <th>Att Avg</th>
+        <th>Delta Avg</th>
+        <th>Theta Avg</th>
+        <th>H.Alph Avg</th>
+        <th>L.Alph Avg</th>
+        <th>H.Beta Avg</th>
+        <th>L.Beta Avg</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for session in sessions %}
+    <tr>
+        <td><a href="/show/{{session.id}}">{{ session.name}}</a></td>
+      <td>{{ session.medavg }}</td>
+      <td>{{ session.attavg}}</td>
+      <td>{{ session.deltavg}}</td>
+      <td>{{ session.thetavg}}</td>
+      <td>{{ session.halavg}}</td>
+      <td>{{ session.lalavg}}</td>
+      <td>{{ session.hbetavg}}</td>
+      <td>{{ session.lbetavg}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+<script type="text/javascript">
+
+// Multiple column bar chart
+function multiColumnBarPlotter(e) {
+      // We need to handle all the series simultaneously.
+      if (e.seriesIndex !== 0) return;
+
+      var g = e.dygraph;
+      var ctx = e.drawingContext;
+      var sets = e.allSeriesPoints;
+      var y_bottom = e.dygraph.toDomYCoord(0);
+
+      // Find the minimum separation between x-values.
+      // This determines the bar width.
+      var min_sep = Infinity;
+      for (var j = 0; j < sets.length; j++) {
+        var points = sets[j];
+        for (var i = 1; i < points.length; i++) {
+          var sep = points[i].canvasx - points[i - 1].canvasx;
+          if (sep < min_sep) min_sep = sep;
+        }
+      }
+      var bar_width = Math.floor(2.0 / 3 * min_sep);
+
+      //var fillColors = [];
+      var fillColors = ["#2A9FD6", "#77B300", "#1F79A3", "#9933CC", "#CC6D00", "#CC0000", "#7A29A3", "#77B300", "#FF8800", "#2180AC"];
+      var strokeColors = ["#2A9FD6", "#77B300", "#1F79A3", "#9933CC", "#CC6D00", "#CC0000", "#7A29A3", "#77B300", "#FF8800", "#2180AC"];
+      //var strokeColors = g.getColors();
+      for (var i = 0; i < strokeColors.length; i++) {
+        var color = new RGBColorParser(strokeColors[i]);
+        color.r = Math.floor((255 + color.r) / 2);
+        color.g = Math.floor((255 + color.g) / 2);
+        color.b = Math.floor((255 + color.b) / 2);
+        fillColors.push(color.toRGB());
+      }
+
+      for (var j = 0; j < sets.length; j++) {
+        ctx.fillStyle = fillColors[j];
+        ctx.strokeStyle = strokeColors[j];
+        for (var i = 0; i < sets[j].length; i++) {
+          var p = sets[j][i];
+          var center_x = p.canvasx;
+          var x_left = center_x - (bar_width / 2) * (1 - j/(sets.length-1));
+
+          ctx.fillRect(x_left, p.canvasy,
+              bar_width/sets.length, y_bottom - p.canvasy);
+
+          ctx.strokeRect(x_left, p.canvasy,
+              bar_width/sets.length, y_bottom - p.canvasy);
+        }
+      }
+    }
+
+    g = new Dygraph(
+            document.getElementById("graph"),
+            "/compdata/",
+            {
+             legend: 'always',
+             labelsKMB: true,
+             labelsDiv: document.getElementById("labels"),
+             labelsSeparateLines: true,
+             axisLabelColor: '#bebebe',
+             width: 900,
+             height: 400,
+             colors: ["#2A9FD6", "#77B300", "#1F79A3", "#9933CC", "#CC6D00", "#CC0000", "#7A29A3", "#77B300", "#FF8800", "#2180AC"],
+             includeZero: true,
+             drawAxesAtZero: true,
+             xRangePad: 70,
+             axes: {
+                    x: {
+                        ticker : function() {
+                            return [
+                            {% for session in sessions %}
+                            {v: {{forloop.counter }} , label: "{{session.name}}"},
+                            {% endfor %}
+                            ];
+                        }
+                    }
+             },
+             plotter: multiColumnBarPlotter
+            });
+
+
+  function toggleline(el) {
+      g.setVisibility(el.id, el.checked);
+  }
+</script>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.dtl" %}
+
+{% block title %} <title> EEG View : Sessions </title> {% endblock %}
+
+{% block body %}
+   <table class="table table-hover" summary="Session Stats">
+    <thead>
+     <tr class="active">
+        <th>Session</th>
+        <th>Notes</th>
+        <th>Date</th>
+        <th colspan="3">Options</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for session in sessions %}
+    <tr>
+      <td><a href="/show/{{ session.id }}">{{ session.name}}</a></td>
+      <td>{{ session.notes|truncatechars:100 }}</td>
+      <td>{{ session.date }}</td>
+      <td><a href="/edit/{{ session.id }}"><span class="glyphicon glyphicon-edit" title="Edit"></span></a></td>
+      <td><a href="/restat/{{session.id}}"><span class="glyphicon glyphicon-repeat" title="Make stats"></span></a></td>
+      <td><a href="/export/{{session.id}}"><span class="glyphicon glyphicon-export" title="Export to CSV"></span></a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+{% endblock %}

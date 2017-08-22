@@ -1,0 +1,176 @@
+{% extends "base.dtl" %}
+
+{% block title %} <title> Erltricity : Info </title> {% endblock %}
+
+{% block headers %}
+    <script type="text/javascript" src="/static/js/dygraph.js"></script>
+    <style>
+        input{color: black;}
+    </style>
+{% endblock %}
+
+{% block navbar %} <a class="navbar-brand" href="/edit/{{id}}">{{ name }} - {{ notes|truncatechars:83 }}</a> {% endblock %}
+
+{% block body %}
+    <table class="table"><tr><td>
+    <div id="graph"></div>
+    </td><td valign="top" align="left">
+    <div id="labels" style="width:180px; font-size:1em;"></div>
+    </td>
+    </tr></table>
+
+<fieldset>
+    <div class="well">
+        <span>
+        <input type=checkbox id=0 onClick="toggleline(this)" checked>
+        <label for="0"> Meditation </label>
+        </span>
+        <span>
+        <input type=checkbox id=1 onClick="toggleline(this)" checked>
+        <label for="1"> Attention </label>
+        </span>
+        <span>
+        <input type=checkbox id=2 onClick="toggleline(this)" checked>
+        <label for="2"> Delta </label>
+        </span>
+        <span>
+        <input type=checkbox id=3 onClick="toggleline(this)" checked>
+        <label for="3"> Theta </label>
+        </span>
+        <span>
+        <input type=checkbox id=4 onClick="toggleline(this)" checked>
+        <label for="4"> HighAlpha </label>
+        </span>
+        <span>
+        <input type=checkbox id=5 onClick="toggleline(this)" checked>
+        <label for="5"> LowAlpha </label>
+        </span>
+        <span>
+        <input type=checkbox id=6 onClick="toggleline(this)" checked>
+        <label for="6"> HighBeta </label>
+        </span>
+        <span>
+        <input type=checkbox id=7 onClick="toggleline(this)" checked>
+        <label for="7"> LowBeta </label>
+        </span>
+        <span>
+        <input type=checkbox id=8 onClick="toggleline(this)" checked>
+        <label for="8"> MidGamma </label>
+        </span>
+        <span>
+        <input type=checkbox id=9 onClick="toggleline(this)" checked>
+        <label for="9"> LowGamma </label>
+        </span>
+    </div>
+</fieldset>
+
+<h3>Stats</h3>
+    <table class="table table-hover" summary="Session Stats">
+    <thead>
+        <tr class="active">
+            <th>Waveform</th>
+            <th>Average</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Peaks</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Meditation</td>
+            <td>{{stats.meditation_avg}}</td>
+            <td>{{stats.meditation_max }}</td>
+            <td>{{stats.meditation_min }}</td>
+            <td>{{stats.meditation_peaks }}</td>
+        </tr>
+        <tr>
+            <td>Attention</td>
+            <td>{{stats.attention_avg}}</td>
+            <td>{{stats.attention_max}}</td>
+            <td>{{stats.attention_min}}</td>
+            <td>{{stats.attention_peaks}}</td>
+        </tr>
+        <tr>
+            <td>Delta</td>
+            <td>{{ stats.delta_avg}}</td>
+            <td>{{ stats.delta_max}}</td>
+            <td>{{ stats.delta_min}}</td>
+            <td>{{ stats.delta_peaks}}</td>
+        </tr>
+        <tr>
+            <td>Theta</td>
+            <td>{{ stats.theta_avg }}</td>
+            <td>{{ stats.theta_max }}</td>
+            <td>{{ stats.theta_min }}</td>
+            <td>{{ stats.theta_peaks }}</td>
+        </tr>
+        <tr>
+            <td>High Alpha</td>
+            <td>{{ stats.highalpha_avg }}</td>
+            <td>{{ stats.highalpha_max }}</td>
+            <td>{{ stats.highalpha_min }}</td>
+            <td>{{ stats.highalpha_peaks }}</td>
+        </tr>
+        <tr>
+            <td>Low Alpha</td>
+            <td>{{ stats.lowalpha_avg }}</td>
+            <td>{{ stats.lowalpha_max }}</td>
+            <td>{{ stats.lowalpha_min }}</td>
+            <td>{{ stats.lowalpha_peaks }}</td>
+        </tr>
+         <tr>
+            <td>High Beta</td>
+            <td>{{ stats.highbeta_avg }}</td>
+            <td>{{ stats.highbeta_max }}</td>
+            <td>{{ stats.highbeta_min }}</td>
+            <td>{{ stats.highbeta_peaks }}</td>
+        </tr>
+          <tr>
+            <td>Low Beta</td>
+            <td>{{ stats.lowbeta_avg }}</td>
+            <td>{{ stats.lowbeta_max }}</td>
+            <td>{{ stats.lowbeta_min }}</td>
+            <td>{{ stats.lowbeta_peaks }}</td>
+        </tr>
+         <tr>
+            <td>Mid Gamma</td>
+            <td>{{ stats.midgamma_avg }}</td>
+            <td>{{ stats.midgamma_max }}</td>
+            <td>{{ stats.midgamma_min }}</td>
+            <td>{{ stats.midgamma_peaks }}</td>
+        </tr>
+       <tr>
+            <td>Low Gamma</td>
+            <td>{{ stats.lowgamma_avg }}</td>
+            <td>{{ stats.lowgamma_max }}</td>
+            <td>{{ stats.lowgamma_min }}</td>
+            <td>{{ stats.lowgamma_peaks }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    g = new Dygraph(
+            document.getElementById("graph"),
+            "/data/{{id}}",
+            {
+             legend: 'always',
+             xlabel: '{{ timestamp }}',
+             labelsKMB: true,
+             labelsDiv: document.getElementById("labels"),
+             labelsSeparateLines: true,
+             axisLabelColor: '#bebebe',
+             width: 900,
+             height: 400,
+             colors: ["#2A9FD6", "#77B300", "#1F79A3", "#9933CC", "#CC6D00", "#CC0000", "#7A29A3", "#77B300", "#FF8800", "#2180AC"],
+             rollPeriod: 1,
+             showRoller: true,
+            });
+
+  function toggleline(el) {
+          g.setVisibility(el.id, el.checked);
+            }
+</script>
+
+
+{% endblock %}
